@@ -1,4 +1,12 @@
 /**
+ * 占位符替换工具类
+ * 
+ * @author 武照帅
+ * @date 2018年11月14日
+ */
+public class PlaceholderUtil {
+
+	/**
 	 * 占位符前缀
 	 */
 	public static final String PLACEHOLDER_PREFIX = "${";
@@ -68,3 +76,4 @@
 		String format = PlaceholderUtil.format(test, map);
 		System.err.println(format);
 	}
+}
