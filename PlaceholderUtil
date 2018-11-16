@@ -1,0 +1,70 @@
+/**
+	 * 占位符前缀
+	 */
+	public static final String PLACEHOLDER_PREFIX = "${";
+
+	/**
+	 * 占位符后缀
+	 */
+	public static final String PLACEHOLDER_SUFFIX = "}";
+
+	/**
+	 * 占位符格式化
+	 * 
+	 * @author 武照帅
+	 * @date 2018年11月14日
+	 * @param text
+	 *            需要替换占位符的字符串
+	 * @param parameter
+	 *            key = 需要被替换的占位符; value = 被替换后的值
+	 * @return 占位符被替换后的字符串
+	 */
+	public static String format(String text, Map<String, String> parameter) {
+		// 如果占位符为空,则返回原字符串
+		if (parameter == null || parameter.isEmpty()) {
+			return text;
+		}
+
+		// 转换成StringBuilder方便下面使用
+		// 占位符与替换值长度不统一
+		StringBuilder sb = new StringBuilder(text);
+		int startIndex = sb.indexOf(PLACEHOLDER_PREFIX);
+
+		// 字符串包含占位符前缀
+		while (startIndex != -1) {
+			// 字符串包含占位符后缀
+			int endIndex = sb.indexOf(PLACEHOLDER_SUFFIX, startIndex + PLACEHOLDER_PREFIX.length());
+			if (endIndex != -1) {
+				// 获取占位符
+				String placeholder = sb.substring(startIndex + PLACEHOLDER_PREFIX.length(), endIndex);
+				int nextIndex = endIndex + PLACEHOLDER_SUFFIX.length();
+				try {
+					// 获取替换的值
+					String propVal = parameter.get(placeholder);
+					if (propVal != null) {
+						// 执行替换
+						sb.replace(startIndex, endIndex + PLACEHOLDER_SUFFIX.length(), propVal);
+						nextIndex = startIndex + propVal.length();
+					} else {
+						System.err.println("没有获取到替换的值...");
+					}
+				} catch (Exception e) {
+					System.err.println("未知原因:" + e.getMessage());
+				}
+				startIndex = sb.indexOf(PLACEHOLDER_PREFIX, nextIndex);
+			} else {
+				// 替换完成
+				endIndex = -1;
+			}
+		}
+		return sb.toString();
+	}
+
+	public static void main(String[] args) {
+		String test = "${A} ${B}";
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("A", "Hello");
+		map.put("B", "Word");
+		String format = PlaceholderUtil.format(test, map);
+		System.err.println(format);
+	}
